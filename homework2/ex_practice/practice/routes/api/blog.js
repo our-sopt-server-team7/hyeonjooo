@@ -1,7 +1,8 @@
-
 var express = require('express');
 var router = express.Router();
 
-router.use('/blog', require('./blog'));
-router.use('/users', require('./users'));
+router.get('/post', function(req,res,next){
+    res.send("this is post page");
+});
+
 module.exports = router;
