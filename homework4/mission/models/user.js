@@ -1,32 +1,12 @@
-// module.exports = [
-//     {
-//         id: 'gngsn',
-//         name: '박경선',
-//         password: 'qwerty',
-//         email: 'gngsn@gmail.com'
-//     },
-//     {
-//         id: 'EZYOON',
-//         name: '이지윤',
-//         password: 'fl0wer',
-//         email: 'gngsn@gmail.com'
-//     },
-//     {
-//         id: 'wjdrbs',
-//         name: '최정균',
-//         password: 'password',
-//         email: 'wjdrbs@gmail.com'
-//     }
-// ];
-
 const pool = require('../modules/pool');
-const encrypt = require('../modules/encrypt');
+const encryption = require('../modules/encrypt');
 const table = 'user';
+
 const user = {
     signup : async (id, name, password, salt, email)=>{
         const fields = 'id, name, password, salt, email';
         const questions = '?, ?, ?, ?, ?';
-        var hashed = await encrypt(salt, password);
+        var hashed = await encryption.encrypt(password, salt);
         values = [id, name, hashed, salt, email];
         const query = `INSERT INTO ${table}(${fields}) VALUES (${questions})`;
         try{
@@ -42,8 +22,9 @@ const user = {
             throw err;
         }
     },
+
     signin : async (id, password)=>{
-        const query = `SELECT * FROM user WHERE id="${id}"`;
+        const query = `SELECT * FROM ${table} WHERE id="${id}"`;
         try{
             const result = await pool.queryParam(query);
             var hashed = await encrypt(result[0].salt, password);
@@ -60,7 +41,7 @@ const user = {
         }
     },
     checkUser : async (id) =>{
-    const query = `SELECT * FROM user WHERE id="${id}"`;
+        const query = `SELECT * FROM ${table} WHERE id="${id}"`;
         try{
         const result = await pool.queryParam(query);
         if(result.length != 0)
@@ -72,15 +53,18 @@ const user = {
             return false;
         }
         }catch(err){
+            console.log('checkUser ERROR : ', err);
             throw err;
         }
     },
-        getUserById : async (id) =>{
-        const query = `SELECT * FROM user WHERE id="${id}"`;
+    getUserById : async (id) =>{
+        const query = `SELECT * FROM ${table} WHERE id="${id}"`;
         try{
-        const result = await pool.queryParam(query);
-        return result[0];
-        }catch(err){
+            const result = await pool.queryParam(query);
+            return result;
+        }
+        catch(err){
+            console.log('getUserById ERROR : ', err);
             throw err;
         }
     }
