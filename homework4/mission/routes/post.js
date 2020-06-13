@@ -3,21 +3,9 @@ var router = express.Router();
 const postController = require('../controller/postController');
 
 router.get('/readall', postController.readAllPost);
+router.get('/:postIdx', postController.readOnePost);
+router.post('/', postController.createPost);
 module.exports = router;
-
-// var express = require('express');
-// var router = express.Router();
-// let responseMessage = require('../modules/responseMessage');
-// let statusCode = require('../modules/statusCode');
-// let util = require('../modules/util');
-// let Post = require('../models/post');
-// let moment = require('moment');
-
-// // 모든 게시글 조회
-// router.get('/', async (req,res)=>{
-//     res.status(statusCode.OK)
-//         .send(util.success(statusCode.OK,responseMessage.READ_ALL_POST_SUCCESS,Post));
-// });
 
 
 // // 게시글 고유 id값을 조회
