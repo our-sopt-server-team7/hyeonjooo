@@ -59,6 +59,7 @@ module.exports = {
         } = req.body;
 
         const idCheck = await users.checkUser(id);
+        //id가 있는지 확인
         if (!idCheck) {
             return await res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.NO_USER));
         }

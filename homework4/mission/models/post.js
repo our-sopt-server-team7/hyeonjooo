@@ -14,7 +14,7 @@ const posts = {
     },
 
     getOnePost : async(postIdx) =>{
-        const query = `SELECT * FROM ${table} WHERE postIdx = ${postIdx}`;
+        const query = `SELECT * FROM ${table} WHERE postIdx = "${postIdx}"`;
         try{
             const result = await pool.queryParam(query);
             return result;
@@ -38,7 +38,7 @@ const posts = {
     },
 
     updatePost : async(postIdx, title, content) =>{
-        const query = `UPDATE ${table} SET title = ${title}, content = ${content} WHERE postIdx=${postIdx}`;
+        const query = `UPDATE ${table} SET title = ${title}, content = "${content}" WHERE postIdx = "${postIdx}"`;
         try{
             const result = await pool.queryParam(query);
             return result;
