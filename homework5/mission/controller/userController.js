@@ -21,11 +21,8 @@ module.exports = {
         if (check) {
             return await res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, "아이디있어"));
         }
-        const salt = 'dfw23EFVR3fefnd68FW3r4343';
-        const hashedPassword = crypto.pbkdf2Sync(password, salt, 1, 32, 'sha512').toString('hex');
-
-        // User.push({id, name, password, email});
-        const idx = await users.signup(id, name, hashedPassword, salt, email);
+        const salt = await encryption.salt();
+        const idx = await users.signup(id, name, password, salt, email);
         if (idx === -1) {
             return await res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
@@ -38,32 +35,21 @@ module.exports = {
             password
         } = req.body;
         if (!id || !password) {
-            res.status(statusCode.BAD_REQUEST)
-                .send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
-            return;
+        return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
         }
+
         if(await users.checkUser(id) === false)
         return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.NO_USER));
 
-        const user = await users.signin(id, password);
-        if(user === false)
-            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.MISS_MATCH_PW));
+        const result = await users.signin(id);
+        const originPassword = result[0].password;
+        const originSalt = result[0].salt;
+        const hashedPassword = await encryption.encrypt(password, originSalt);
+        
+        if(originPassword !== hashedPassword)
+            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, "틀렸어비번"));
 
         return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {id: id}));
-
-        // const user = users.filter(user => user.id == id);
-        // if (user.length == 0) {
-        //     res.status(statusCode.BAD_REQUEST)
-        //         .send(util.fail(statusCode.BAD_REQUEST, resMessage.NO_USER));
-        //     return;
-        // }
-        // if (user[0].password !== password ) {
-        //     res.status(statusCode.BAD_REQUEST)
-        //     .send(util.fail(statusCode.BAD_REQUEST, resMessage.MISS_MATCH_PW));
-        //     return;
-        // }
-        // res.status(statusCode.OK)
-        //     .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {userId: id}));
     },
 
     getUserById: async (req, res) => {

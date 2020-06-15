@@ -7,7 +7,8 @@ const user = {
     signup: async (id, name, password, salt, email) =>{
         const fields = 'id, name, password, salt, email';
         const questions = `?, ?, ?, ?, ?`;
-        const values = [id, name, password, salt, email];
+        const hashedPassword = await encryption.encrypt(password, salt);
+        const values = [id, name, hashedPassword, salt, email];
         const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
         try{
             const result = await pool.queryParamArr(query, values);
@@ -23,18 +24,19 @@ const user = {
         }
     },
 
-    signin : async (id, password)=>{
+    signin : async (id)=>{
         const query = `SELECT * FROM ${table} WHERE id = "${id}"`;
         try{
             const result = await pool.queryParam(query);
-            console.log("입력한 password: " + password);
-            console.log("원래 salt값: " + result[0].salt);
-            console.log("저장된 hash값: " + result[0].password);
-            const hashed = await crypto.pbkdf2Sync(password, result[0].salt, 1, 32, 'sha512').toString('hex');
-            console.log('로그인 비번으로 해쉬한값: ' + hashed);
+            // console.log("입력한 password: " + password);
+            // console.log("원래 salt값: " + result[0].salt);
+            // console.log("저장된 hash값: " + result[0].password);
+            // const hashed = await crypto.pbkdf2Sync(password, result[0].salt, 1, 32, 'sha512').toString('hex');
+            // console.log('로그인 비번으로 해쉬한값: ' + hashed);
 
-            if(result[0].password === hashed) return result;
-            else return false;
+            // if(result[0].password === hashed) return result;
+            // else return false;
+            return result;
         } catch(err){
             console.log('signin ERROR : ', err);
             throw err;
