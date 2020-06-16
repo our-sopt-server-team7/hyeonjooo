@@ -27,18 +27,19 @@ const posts = {
         const fields = `author, title, content, createdAt`;
         const question = `?,?,?,?`;
         const values = [author, title, content, createdAt];
-        const query = `INSERT INTO ${table}(${fields}) VALUES(${question})`;
+        const query=`insert into ${table} (${fields}) values (${question});`;
 
         try{
-            const result = await queryParam(query);
-            return result;
+            const result = await pool.queryParamArr(query, values);
+            const insertId = result.insertId;
+            return insertId;
         }catch(err){
             console.log('createPost err' + err);
         }throw err;
     },
 
     updatePost : async(postIdx, title, content) =>{
-        const query = `UPDATE ${table} SET title = ${title}, content = "${content}" WHERE postIdx = "${postIdx}"`;
+        const query = `UPDATE ${table} SET title = "${title}", content = "${content}" WHERE postIdx = "${postIdx}"`;
         try{
             const result = await pool.queryParam(query);
             return result;

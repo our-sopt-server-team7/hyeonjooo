@@ -22,8 +22,7 @@ module.exports = {
     },
 
     createPost: async(req, res) =>{
-        const author = req.userIdx;
-        const {title, content} = req.body;
+        const {author, title, content} = req.body;
         const createdAt = moment().format('DD/MM/YYYY');
 
         if(!author || !title || !content){
@@ -31,12 +30,11 @@ module.exports = {
         }
 
         const data = await posts.createPost(author, title, content, createdAt);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, "포스팅 하기 성공", data));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, "포스팅 하기 성공", {postIdx:data}));
     },
 
     updatePost: async(req, res) =>{
-        const author = req.userIdx;
-        const {postIdx, title, content} = req.body;
+        const {author, postIdx, title, content} = req.body;
         if(!author || !postIdx || !title || !content){
             return await res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
         }
@@ -50,7 +48,6 @@ module.exports = {
     },
 
     deletePost : async (req,res)=>{
-        const author = req.userIdx;
         const {postIdx} = req.body;
         if(!postIdx){
             return await res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
