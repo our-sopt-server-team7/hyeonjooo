@@ -4,6 +4,7 @@ const util = require('../modules/util');
 const resMessage = require('../modules/responseMessage');
 const statusCode = require('../modules/statusCode');
 const crypto = require('crypto');
+const jwt = require('../modules/jwt');
 
 module.exports = {
     signup : async(req,res) =>{
@@ -19,7 +20,7 @@ module.exports = {
         // 사용중인 아이디가 있는지 확인
         const check = await users.checkUser(id);
         if (check) {
-            return await res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, "아이디있어"));
+            return await res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.ALREADY_ID));
         }
         const salt = await encryption.salt();
         const idx = await users.signup(id, name, password, salt, email);
@@ -47,9 +48,10 @@ module.exports = {
         const hashedPassword = await encryption.encrypt(password, originSalt);
         
         if(originPassword !== hashedPassword)
-            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, "틀렸어비번"));
-
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {id: id}));
+            return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.MISS_MATCH_PW));
+            
+        const {token, _} = await jwt.sign(result[0]);
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {accessToken : token}));
     },
 
     getUserById: async (req, res) => {
