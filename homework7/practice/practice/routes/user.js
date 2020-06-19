@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user');
 const AuthMiddleware = require('../middlewares/auth');
-// const upload = require('../modules/multer');
+
+// const upload = require('../modules/multer');//이건 s3연결할 때
 
 const multer = require('multer');
 const upload = multer({
     dest: 'upload/'
-});
+});//s3연결할 때는 주석처리
 
 router.post('/signup', UserController.signup);
 router.post('/signin', UserController.signin);
