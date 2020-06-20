@@ -9,7 +9,7 @@ const pool = require('../modules/pool');
 module.exports = {
     readAllPost: async(req, res) => {
         const data = await posts.getAllPost();
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, "모든 포스트 불러오기 성공", data));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.readAllPost, data));
     },
 
     readOnePost: async(req, res) =>{
@@ -18,7 +18,7 @@ module.exports = {
             return await res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
         }
         const data = await posts.getOnePost(postIdx);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, "1개 포스트 불러오기 성공", data));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_POST, data));
     },
 
     createPost: async(req, res) =>{
@@ -30,7 +30,7 @@ module.exports = {
         }
 
         const data = await posts.createPost(author, title, content, createdAt);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, "포스팅 하기 성공", {postIdx:data}));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_POST, {postIdx:data}));
     },
 
     updatePost: async(req, res) =>{
