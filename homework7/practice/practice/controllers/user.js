@@ -90,15 +90,5 @@ module.exports = {
         // call model - database
         const result = await UserModel.updateProfile(userIdx, profileImg);
         res.status(CODE.OK).send(util.success(CODE.OK, MSG.UPDATE_PROFILE_SUCCESS, result));
-    },
-
-    array: async(req, res) =>{
-        const images = req.files;
-        if(images === undefined){
-            return res.status(CODE.OK).send(util.success(CODE.BAD_REQUEST, "이미지를 첨부해주세요."));
-        }
-
-        const location = images.map(img => img.location);
-        res.status(CODE.OK).send(util.success(CODE.OK,images.length+"개의 이미지 저장 성공",{image:location}));
     }
 }

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user');
 const AuthMiddleware = require('../middlewares/auth');
-
+const imageController = require('../controllers/image')
 const upload = require('../modules/multer');//이건 s3연결할 때
 
 // const multer = require('multer');
@@ -22,5 +22,5 @@ router.post('/signin', UserController.signin);
     RESPONSE DATA : user profile
 */
 router.post('/profile', AuthMiddleware.checkToken, upload.single('profile'), UserController.updateProfile);
-router.post('/selfies', AuthMiddleware.checkToken, upload.array('images', 3), UserController.array);
+router.post('/selfies', AuthMiddleware.checkToken, upload.array('images', 3), imageController.array);
 module.exports = router;
